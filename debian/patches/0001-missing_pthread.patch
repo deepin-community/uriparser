@@ -1,0 +1,36 @@
+Description: Add missing pthread to build system
+Author: Jörg Frings-Fürst <debian@jff.email>
+Last-Update: 2019-07-13
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+Index: trunk/CMakeLists.txt
+===================================================================
+--- trunk.orig/CMakeLists.txt
++++ trunk/CMakeLists.txt
+@@ -229,7 +229,8 @@ if(URIPARSER_BUILD_TOOLS)
+         ${CMAKE_CURRENT_SOURCE_DIR}/tool/uriparse.c
+     )
+ 
+-    target_link_libraries(uriparse PUBLIC uriparser)
++    find_package(Threads REQUIRED)
++    target_link_libraries(uriparse PUBLIC uriparser pthread)
+ 
+     if(HAIKU)
+         # Function inet_ntop needs -lsocket or -lnetwork (see pull request #45)
+@@ -270,6 +271,7 @@ if(URIPARSER_BUILD_TESTS)
+     enable_testing()
+ 
+     find_package(GTest 1.8.0 REQUIRED)
++    find_package(Threads REQUIRED)
+ 
+     add_executable(testrunner
+         ${CMAKE_CURRENT_SOURCE_DIR}/test/FourSuite.cpp
+@@ -299,7 +301,7 @@ if(URIPARSER_BUILD_TESTS)
+     )
+ 
+     target_link_libraries(testrunner PUBLIC
+-        ${GTEST_BOTH_LIBRARIES}
++        ${GTEST_BOTH_LIBRARIES} pthread
+     )
+ 
+     # NOTE: uriparser does not use pthreads itself but gtest does

@@ -1,0 +1,5 @@
+usr/share/doc/uriparser/uriparser-0.9.4.qch
+usr/share/doc/uriparser/html/*
+usr/bin/uriparse
+usr/lib/*/cmake/uriparser-0.9.5/*
+usr/lib/*/uriparser-0.9.5/uriparser.cmake

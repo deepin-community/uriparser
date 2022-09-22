@@ -1,0 +1,4 @@
+version=4
+opts=dversionmangle=s/\+dfsg(.*)//,repacksuffix=+dfsg,uversionmangle=s/_/./g;s/\.(rc\d*)$/~$1/,compression=xz \
+  https://github.com/uriparser/uriparser/releases \
+  .*[^n]/(?:|v|version-|version|release-|r|REL_|rel-|uriparser(?:_|-))(\d[^\s/]*)\.(?:tar\.xz|txz|tar\.bz2|tbz2|tar\.gz|tgz)

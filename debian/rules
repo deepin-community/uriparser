@@ -1,0 +1,42 @@
+#!/usr/bin/make -f
+
+include /usr/share/dpkg/default.mk
+
+# hardening
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+# Configure arguments
+
+confflags = --prefix=/usr --disable-test --disable-doc --libdir=\$${prefix}/lib/$(DEB_HOST_MULTIARCH)
+
+DEB_HOST_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+DEB_BUILD_GNU_TYPE ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+
+confflags += --build $(DEB_BUILD_GNU_TYPE)
+
+# Only specify --host when cross-compiling
+ifneq ($(DEB_BUILD_GNU_TYPE), $(DEB_HOST_GNU_TYPE))
+	confflags += --host $(DEB_HOST_GNU_TYPE)
+endif
+
+export QT_SELECT=qt5
+
+%:
+	dh $@ --with autoreconf
+
+override_dh_auto_configure:
+	dh_auto_configure --buildsystem=cmake
+
+override_dh_auto_build-indep:
+	dh_auto_build
+
+override_dh_installdocs-indep:
+	cp -r $(CURDIR)/obj-$(DEB_BUILD_GNU_TYPE)/doc/html/* $(CURDIR)/debian/liburiparser-doc/usr/share/doc/liburiparser-doc/html/
+	$(RM) debian/liburiparser-doc/usr/share/doc/liburiparser-doc/html/*.md5
+	dh_installdocs
+
+override_dh_makeshlibs:
+	dh_makeshlibs -- -v$(DEB_VERSION_UPSTREAM) -Pdebian/liburiparser1 -pliburiparser1
+
+override_dh_compress:
+	dh_compress -X.qhp
